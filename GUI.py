@@ -1,10 +1,8 @@
 import sys
 from PyQt5 import QtWidgets, uic
-import cv2
 from pathlib import Path
 from ColorFinder import ColorFinder
-import RPi.GPIO as GPIO
-import time
+
 import subprocess
 
 
@@ -33,24 +31,9 @@ class HomeWindow(QtWidgets.QMainWindow):
         self.displayLabel.setText(label)
 
     def load_file(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        led = 4
-        GPIO.setup(led,GPIO.OUT)
-
-        GPIO.output(led,1)
-        time.sleep(5)
-
-        cam_port = 0
-        cam = cv2.VideoCapture(cam_port)
-        result, image = cam.read()
-
-        if result:
-            cv2.imwrite("test.png", image)
-
-        self._filename = "test.png"
-
-        GPIO.output(led, 0)
+        self._filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, 'Load Image',
+            '', "Image files (*.png *.jpg *.jpeg *.jfif *.tif *.tiff *.PNG *.JPG *.JPEG *.TIF *.TIFF)")
 
     def stop(self):
         subprocess.Popen(['sudo', 'shutdown', '-r', 'now'])
